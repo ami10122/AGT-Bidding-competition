@@ -1,330 +1,230 @@
-# AGT Auto-Bidding Competition System
+# 🎯 AGT Auto-Bidding Competition
 
-## Overview
+## Welcome Students!
 
-This is the competition platform for the AGT 2025-2026 Auto-Bidding Challenge. The system orchestrates multi-stage auction tournaments where teams submit bidding agents that compete in sequential second-price sealed-bid (Vickrey) auctions.
+This is your competition package for the AGT 2025-2026 Auto-Bidding Challenge. Design an autonomous bidding agent that competes in repeated second-price auctions to maximize utility!
 
-## Features
+## 🚀 Quick Start
 
-- **Two-Stage Tournament**: Qualification round (Stage 1) followed by championship round (Stage 2)
-- **Second-Price Sealed-Bid Auctions**: Vickrey auction mechanism with budget constraints
-- **Valuation Generation**: Automated generation of item valuations per competition rules
-- **Timeout Enforcement**: 2-second execution limit per bid decision
-- **Comprehensive Logging**: Detailed logs for course staff, public results for teams
-- **Leaderboard with Tiebreakers**: Proper ranking with multiple tiebreaker criteria
-- **Agent Validation**: Tools to validate agent submissions before competition
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Installation
+2. **Read the guides:**
+   - Start with [START_HERE.md](START_HERE.md)
+   - Full guide: [STUDENT_GUIDE.md](STUDENT_GUIDE.md)
+   - Quick reference: [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
 
-### Prerequisites
+3. **Create your agent:**
+   ```bash
+   mkdir teams/my_team
+   cp AGENT_TEMPLATE.py teams/my_team/bidding_agent.py
+   ```
 
-- Python 3.11 or higher
-- pip package manager
+4. **Test your agent:**
+   ```bash
+   python simulator.py --your-agent teams/my_team/bidding_agent.py --num-games 10
+   ```
 
-### Setup
+## 📋 Competition Overview
 
-1. Clone or download the repository
+### Game Structure
+- **Items**: 20 total per game, 15 rounds of auctions
+- **Budget**: 60 units per game
+- **Auction Type**: Second-price sealed-bid (Vickrey)
+- **Goal**: Maximize utility = (Values Won) - (Prices Paid)
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
+### Tournament Structure
+- **Stage 1**: Qualification arenas (5 teams each)
+- **Stage 2**: Championship with top teams
+- **Scoring**: Total utility across 5 games per stage
+
+## 📦 Package Contents
+
+```
+AGT_Competition_Package/
+├── 📖 START_HERE.md              # Start here!
+├── 📖 STUDENT_GUIDE.md           # Complete guide (15 pages)
+├── 📖 QUICK_REFERENCE.md         # Quick lookup
+├── 📖 STUDENT_RESOURCES.md       # Resources overview
+├── 📝 AGENT_TEMPLATE.py          # Annotated template
+├── 📋 agt_competition_rules.md   # Official rules
+│
+├── 🧪 simulator.py               # Test your agent
+├── ⚙️  main.py                    # Competition system
+├── 📦 requirements.txt           # Dependencies
+│
+├── 💡 examples/                  # Example strategies
+│   ├── truthful_bidder.py
+│   ├── budget_aware_bidder.py
+│   ├── strategic_bidder.py
+│   └── random_bidder.py
+│
+├── 🔧 src/                       # System code
+├── 📁 teams/                     # Your work area
+├── 📊 results/                   # Auto-generated
+└── 📝 logs/                      # Auto-generated
 ```
 
-3. Verify installation:
-```bash
-python main.py --mode validate --validate examples/truthful_bidder.py
-```
+## 🎯 Creating Your Agent
 
-## Project Structure
+### Required Interface
 
-```
-AGT_2026/
-├── src/                          # Core system modules
-│   ├── base_agent.py            # Agent interface template
-│   ├── config.py                # Configuration constants
-│   ├── valuation_generator.py   # Valuation generation
-│   ├── auction_engine.py        # Auction execution
-│   ├── game_manager.py          # Game orchestration
-│   ├── agent_manager.py         # Agent loading and execution
-│   ├── tournament_manager.py    # Tournament management
-│   ├── results_manager.py       # Results and reporting
-│   └── utils.py                 # Utility functions and data models
-├── examples/                     # Example bidding agents
-│   ├── truthful_bidder.py       # Truthful bidding strategy
-│   ├── budget_aware_bidder.py   # Budget-conscious strategy
-│   ├── strategic_bidder.py      # Opponent modeling strategy
-│   └── random_bidder.py         # Random baseline
-├── teams/                        # Team submissions (create this)
-│   ├── team1/
-│   │   └── bidding_agent.py
-│   └── team2/
-│       └── bidding_agent.py
-├── results/                      # Competition results (generated)
-├── logs/                         # Detailed logs (generated)
-├── main.py                       # Main entry point
-├── requirements.txt              # Python dependencies
-├── agt_competition_rules.md     # Official competition rules
-├── design.md                     # System design document
-└── README.md                     # This file
-```
-
-## For Students: Creating Your Agent
-
-### 📚 Student Resources
-
-- **[STUDENT_GUIDE.md](STUDENT_GUIDE.md)** - Comprehensive implementation guide with examples
-- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick reference for common tasks
-- **[simulator.py](simulator.py)** - Local testing tool to test your agent
-
-### 1. Agent Template
-
-Your bidding agent must implement the `BiddingAgent` class interface. See `src/base_agent.py` for the complete template.
-
-### 2. Required Methods
+Your agent must implement the `BiddingAgent` class:
 
 ```python
 class BiddingAgent:
-    def __init__(self, team_id, valuation_vector, budget, auction_items_sequence):
-        # Initialize your agent
+    def __init__(self, team_name: str):
+        self.team_name = team_name
+        # Your initialization
+    
+    def bidding_function(self, item_valuation, remaining_budget, 
+                        round_num, total_rounds, history) -> float:
+        # YOUR STRATEGY HERE
+        # Return bid amount (0 to remaining_budget)
         pass
     
-    def bidding_function(self, item_id) -> float:
-        # Return your bid for the current item
-        # Must return a float: 0 <= bid <= current_budget
-        pass
-    
-    def update_after_each_round(self, item_id, winning_team, price_paid):
-        # Update your beliefs/strategy after each round
+    def update_after_each_round(self, round_result):
+        # Optional: Update strategy after each round
         pass
 ```
 
-### 3. Creating Your Submission
+**See [AGENT_TEMPLATE.py](AGENT_TEMPLATE.py) for detailed annotated template!**
 
-1. Create a directory in `teams/` with your team name:
+## 🧪 Testing Your Agent
+
+### Validate Interface
 ```bash
-mkdir teams/your_team_name
+python main.py --mode validate --validate teams/my_team/bidding_agent.py
+```
+Expected: `✓ Agent validation PASSED`
+
+### Quick Test (10 games)
+```bash
+python simulator.py --your-agent teams/my_team/bidding_agent.py --num-games 10
 ```
 
-2. Copy the base agent template:
+### Thorough Test (50 games)
 ```bash
-cp src/base_agent.py teams/your_team_name/bidding_agent.py
+python simulator.py --your-agent teams/my_team/bidding_agent.py --num-games 50
 ```
 
-3. Implement your `bidding_function` method with your strategy
-
-4. Test your agent:
+### Test Against Specific Opponent
 ```bash
-python main.py --mode validate --validate teams/your_team_name/bidding_agent.py
-```
-
-### 4. Allowed Dependencies
-
-- Standard library (all modules)
-- numpy
-- scipy
-
-**No external APIs, file I/O, or network access allowed!**
-
-### 5. Example Strategies
-
-See the `examples/` directory for reference implementations:
-- **truthful_bidder.py**: Bids exact valuation (optimal without budget constraints)
-- **budget_aware_bidder.py**: Scales bids based on remaining budget
-- **strategic_bidder.py**: Models opponents from observed behavior
-- **random_bidder.py**: Baseline random strategy
-
-### 6. Testing Your Agent
-
-#### Validation
-```bash
-# Validate your agent interface
-python main.py --mode validate --validate teams/your_team_name/bidding_agent.py
-```
-
-#### Simulator (Recommended for Development)
-Test your agent locally against example strategies:
-
-```bash
-# Run 10 games against all example agents
-python simulator.py --your-agent teams/your_team_name/bidding_agent.py --num-games 10
-
-# Test against specific opponent
-python simulator.py --your-agent teams/your_team_name/bidding_agent.py \
+python simulator.py --your-agent teams/my_team/bidding_agent.py \
                     --opponent examples/strategic_bidder.py --num-games 20
-
-# Reproducible testing with seed
-python simulator.py --your-agent teams/your_team_name/bidding_agent.py \
-                    --num-games 50 --seed 42
-
-# Verbose output for debugging
-python simulator.py --your-agent teams/your_team_name/bidding_agent.py \
-                    --num-games 3 --verbose
 ```
 
-**The simulator provides:**
-- Win rate against each opponent
-- Average utility and ranking
-- Budget utilization statistics  
-- Performance assessment and recommendations
-- Detailed game-by-game results
-
-## For Course Staff: Running the Competition
-
-### Running Full Tournament
-
-Run both Stage 1 and Stage 2:
+### Debug Mode
 ```bash
-python main.py --mode tournament --teams-dir teams --output-dir results --verbose
+python simulator.py --your-agent teams/my_team/bidding_agent.py \
+                    --num-games 1 --verbose
 ```
 
-### Running Single Stage
+## 💡 Example Strategies
 
-Stage 1 only:
-```bash
-python main.py --mode stage --stage 1 --teams-dir teams --output-dir results
-```
+Study the examples in `examples/` folder:
+- **`truthful_bidder.py`** - Bids true valuation
+- **`budget_aware_bidder.py`** - Budget pacing strategy  
+- **`strategic_bidder.py`** - Opponent modeling
+- **`random_bidder.py`** - Random baseline
 
-Stage 2 only (with pre-qualified teams):
-```bash
-python main.py --mode stage --stage 2 --teams-dir qualified_teams --output-dir results
-```
+Read the code to learn different approaches!
 
-### Testing with Example Agents
+## 📋 Allowed Dependencies
 
-Create test teams from examples:
-```bash
-# Copy examples to teams directory for testing
-cp -r examples teams/example_team1
-mv teams/example_team1/truthful_bidder.py teams/example_team1/bidding_agent.py
+✅ **Allowed:**
+- Python standard library (all modules)
+- `numpy`
+- `scipy`
 
-cp -r examples teams/example_team2
-mv teams/example_team2/budget_aware_bidder.py teams/example_team2/bidding_agent.py
+❌ **Not allowed:**
+- External APIs
+- File I/O
+- Network access
+- Other external packages
 
-# Add more teams as needed...
+## 📖 Key Rules
 
-# Run tournament
-python main.py --mode tournament --teams-dir teams --verbose
-```
-
-### Command Line Options
-
-```
---mode              : tournament | stage | validate
---teams-dir         : Directory containing team submissions (default: teams)
---output-dir        : Directory for results (default: results)
---stage             : Stage number 1 or 2 (for stage mode)
---validate          : Path to agent file (for validate mode)
---timeout           : Bid execution timeout in seconds (default: 2.0)
---seed              : Random seed for reproducibility (optional)
---log-file          : Custom log file path (optional)
---verbose           : Enable verbose logging
-```
-
-### Results Structure
-
-After running a competition:
-
-```
-results/
-├── stage1/
-│   ├── arena_1/
-│   │   ├── game_1_detailed.json    # Full details (course staff)
-│   │   ├── game_1_public.json      # Public results (students)
-│   │   └── ...
-│   ├── stage1_complete.json
-│   └── stage1_leaderboard.csv
-├── stage2/
-│   ├── arena_championship/
-│   │   └── ...
-│   ├── stage2_complete.json
-│   └── stage2_leaderboard.csv
-└── final_report.txt                 # Human-readable summary
-```
-
-## Competition Rules Summary
-
-- **Items**: 20 total, 15 randomly selected per game
-- **Budget**: 60 units per game
-- **Rounds**: 15 auction rounds per game
-- **Games**: 5 games per stage
-- **Auction Type**: Second-price sealed-bid (Vickrey)
-- **Timeout**: 2 seconds per bid decision
-- **Scoring**: Utility = Σ(Value of Won Items) - Total Amount Paid
+### Game Parameters
+- **20 items** per game, **15 rounds** of auctions
+- **60 units** budget per game
+- **2 seconds** timeout per bid
+- **Second-price sealed-bid** auctions (winner pays 2nd-highest bid)
 
 ### Valuation Distribution
+Each game you receive 20 item valuations:
+- **6 high-value** items: U[10, 20]
+- **4 low-value** items: U[1, 10]  
+- **10 mixed-value** items: U[1, 20]
 
-- **6 items**: High-value for all teams (U[10, 20])
-- **4 items**: Low-value for all teams (U[1, 10])
-- **10 items**: Mixed values (U[1, 20])
+### Scoring
+**Utility = (Sum of Values Won) - (Sum of Prices Paid)**
 
-### Ranking Criteria
-
+Ranking by:
 1. Total utility across all games
-2. Highest single item utility captured (tiebreaker 1)
-3. Most items won (tiebreaker 2)
-4. Team registration timestamp (tiebreaker 3)
+2. Highest single-item utility (tiebreaker)
+3. Most items won (tiebreaker)
 
-## Troubleshooting
+**See [agt_competition_rules.md](agt_competition_rules.md) for complete rules!**
 
-### Agent Not Loading
+## ⚠️ Common Issues
 
-- Ensure `bidding_agent.py` exists in team directory
-- Check class name is exactly `BiddingAgent`
-- Verify all required methods are implemented
+### ❌ Agent Not Loading
+- File must be named `bidding_agent.py`
+- Class must be named `BiddingAgent`
+- Verify all required methods exist
 
-### Timeout Errors
+### ⏱️ Timeout Errors
+- Function must return in < 2 seconds
+- Avoid expensive loops
+- Optimize your calculations
 
-- Your `bidding_function` is taking > 2 seconds
-- Optimize your code or reduce complexity
-- Avoid infinite loops
+### 📦 Import Errors
+- Only use: stdlib, numpy, scipy
+- No other packages allowed
 
-### Import Errors
+### 💰 Budget Issues
+- Bids over budget are auto-capped
+- Check remaining budget before bidding
 
-- Only use allowed libraries: standard library, numpy, scipy
-- No external dependencies or custom packages
+## ✅ Pre-Submission Checklist
 
-### Budget Exceeded
+- [ ] File named `bidding_agent.py`
+- [ ] Class named `BiddingAgent`
+- [ ] Validation passes
+- [ ] Tested with 50+ games
+- [ ] No timeout errors
+- [ ] Team names in code header
+- [ ] Only allowed imports
 
-- Bids exceeding budget are automatically capped
-- Check logs for warnings about capped bids
+## 🆘 Getting Help
 
-## Development and Testing
+1. Read [STUDENT_GUIDE.md](STUDENT_GUIDE.md) thoroughly
+2. Check [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
+3. Study example agents in `examples/`
+4. Review [agt_competition_rules.md](agt_competition_rules.md)
+5. Ask on course forum
+6. Attend office hours
 
-### Running Tests
+## 📅 Important Dates
 
-```bash
-# Validate all example agents
-for agent in examples/*.py; do
-    python main.py --mode validate --validate "$agent"
-done
-```
-
-### Reproducible Results
-
-Use `--seed` for reproducible valuation generation:
-```bash
-python main.py --mode tournament --seed 42 --verbose
-```
-
-### Verbose Logging
-
-Enable detailed logging to see all bids and decisions:
-```bash
-python main.py --mode tournament --verbose --log-file logs/debug.log
-```
-
-## Support
-
-For technical questions or issues:
-- Review the official competition rules: `agt_competition_rules.md`
-- Check the design document: `design.md`
-- Examine example agents in `examples/`
-- Contact course staff via the course forum
-
-## License
-
-This competition system is for educational use in the AGT 2025-2026 course.
+- **Package Release:** December 2025
+- **Submission Deadline:** [TBD - Check Moodle]
+- **Competition Run:** [TBD]
+- **Results Announced:** [TBD]
 
 ---
 
-*Good luck to all teams! May the best strategy win!* 🏆
+## 🏆 Good Luck!
+
+**May the best strategy win!**
+
+Questions? Check the documentation or ask on the forum.
+
+Ready? Start with [START_HERE.md](START_HERE.md)!
+
+---
+
+*AGT 2025-2026 | Hebrew University of Jerusalem*
