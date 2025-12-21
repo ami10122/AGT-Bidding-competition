@@ -822,41 +822,62 @@ Your submission must follow this exact structure:
 
 ```python
 class BiddingAgent:
-    def __init__(self):
-        # Your initialization code
-        pass
+    def __init__(self, team_id: str, valuation_vector: Dict[str, float], 
+                 budget: float, opponent_teams: List[str]):
+        """
+        Initialize your agent at the start of each game.
+        
+        Args:
+            team_id: Your unique team identifier
+            valuation_vector: Dict mapping item_id to your valuation
+            budget: Initial budget (always 60)
+            opponent_teams: List of opponent team IDs in the arena
+        """
+        self.team_id = team_id
+        self.valuation_vector = valuation_vector
+        self.budget = budget
+        self.opponent_teams = opponent_teams
+        # Add your custom state variables here
     
-    def on_auction_start(self, total_rounds: int, total_items: int, 
-                        initial_budget: float) -> bool:
-        # Initialize game state
-        return True
-    
-    def on_new_round(self, round_number: int) -> bool:
-        # Prepare for new round
-        return True
-    
-    def on_valuation_received(self, item_id: str, valuation: float) -> bool:
-        # Store valuation
+    def update_after_each_round(self, item_id: str, winning_team: str, 
+                                price_paid: float) -> bool:
+        """
+        Called after each auction round with public information.
+        
+        Args:
+            item_id: The item that was just auctioned
+            winning_team: Team ID of the winner
+            price_paid: Price the winner paid (second-highest bid)
+        
+        Returns:
+            True if update successful
+        """
+        # Update your state, beliefs, and strategy here
         return True
     
     def bidding_function(self, item_id: str) -> float:
+        """
+        Decide how much to bid for the current item.
+        
+        Args:
+            item_id: The item being auctioned
+        
+        Returns:
+            float: Your bid amount (>= 0, <= budget)
+        """
         # Return your bid (must complete in 3 seconds)
         return bid
-    
-    def on_auction_result(self, item_id: str, winner_team_id: str, 
-                         winner_bid: float, price: float) -> bool:
-        # Update state with auction outcome
-        return True
 ```
 
 ### Common Submission Errors
 
 1. **Wrong folder structure** - Must be `teams/team_name/bidding_agent.py`
-2. **Missing methods** - All required methods must be implemented
-3. **Class name mismatch** - Class must be named `BiddingAgent`
-4. **Timeout issues** - Bidding function exceeds 3 seconds
-5. **Unhandled exceptions** - Agent crashes on edge cases
-6. **Team name mismatch** - Folder name doesn't match registration
+2. **Missing methods** - Must implement `__init__`, `update_after_each_round`, and `bidding_function`
+3. **Wrong method signatures** - `__init__` must accept `team_id`, `valuation_vector`, `budget`, `opponent_teams`
+4. **Class name mismatch** - Class must be named `BiddingAgent`
+5. **Timeout issues** - Bidding function exceeds 3 seconds
+6. **Unhandled exceptions** - Agent crashes on edge cases
+7. **Team name mismatch** - Folder name doesn't match registration
 
 ### Testing Before Submission
 
